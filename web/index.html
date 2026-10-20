@@ -1,0 +1,351 @@
+<!doctype html>
+<!-- Copyright (c) 2026 Sharif Mutasim · SPDX-License-Identifier: MIT -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cycler Catalogue</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <h1>Cycler Catalogue</h1>
+    <p class="sub">Venus · Earth · Mars cycler trajectories — <span id="meta-line"></span></p>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="ideal" aria-selected="true">Catalogue</button>
+    <button role="tab" data-tab="ephem" aria-selected="false">Real-planet windows</button>
+    <button role="tab" data-tab="valid" aria-selected="false">Validation</button>
+    <button role="tab" data-tab="method" aria-selected="false">Method</button>
+  </nav>
+  <button id="theme" class="ghost" title="Toggle light / dark">◐</button>
+</header>
+
+<main>
+  <section class="tiles" id="tiles"></section>
+
+  <!-- ============ Catalogue ============ -->
+  <section id="tab-ideal" class="tab">
+    <div class="model-bar">
+      <div class="seg big" id="model">
+        <button data-v="ideal" aria-pressed="true">Ideal model</button>
+        <button data-v="real" aria-pressed="false">Real planets</button>
+      </div>
+      <p id="model-note" class="model-note"></p>
+    </div>
+    <div class="filters" id="ideal-filters">
+      <label class="f-search"><span>Search</span><input id="f-q" type="search" placeholder="ID, sequence or notation, e.g. EEM, 1L1"></label>
+      <div class="f-group"><span>Family</span>
+        <div class="seg" id="f-fam">
+          <button data-v="all" aria-pressed="true">All</button>
+          <button data-v="single_home" aria-pressed="false">Single-assist</button>
+          <button data-v="sequence" aria-pressed="false">Multi-assist</button>
+          <button data-v="home_only" aria-pressed="false" title="Single-assist orbits whose arc never crosses the target planet's orbit, so they only ever visit the home planet">Home-only</button>
+        </div>
+      </div>
+      <div class="f-group"><span>Planets</span><div class="chips" id="f-sys"></div></div>
+      <label class="f-range"><span>Max ΔV / cycle <b id="f-dv-v"></b></span><input id="f-dv" type="range" min="-3" max="2.3" step="0.05"></label>
+      <label class="f-range"><span>Max v∞ <b id="f-vinf-v"></b></span><input id="f-vinf" type="range" min="1" max="40" step="0.5"></label>
+      <label class="f-range"><span>Max period <b id="f-per-v"></b></span><input id="f-per" type="range" min="1" max="16" step="0.25"></label>
+      <label class="f-range" title="Launch energy C3 = v∞² needed to board the cycler at an Earth flyby"><span>Max launch C3 <b id="f-c3-v"></b></span><input id="f-c3" type="range" min="0" max="150" step="2"></label>
+      <div class="f-checks">
+        <label><input type="checkbox" id="f-ball"> <span id="f-ball-l">Ballistic only</span></label>
+        <label><input type="checkbox" id="f-earth"> Visits Earth</label>
+      </div>
+      <button class="ghost" id="f-reset">Reset</button>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-head">
+          <h2 id="ideal-plot-title">Period vs cost</h2>
+          <div class="axis-pick">
+            <label>x <select id="ax-x">
+              <option value="period">Period (yr)</option>
+              <option value="dv">ΔV / cycle (km/s, log)</option>
+              <option value="vmax">Max v∞ (km/s)</option>
+              <option value="c3">Launch C3 (km²/s²)</option>
+              <option value="leo">ΔV from LEO (km/s)</option>
+              <option value="aph">Aphelion (AU)</option>
+              <option value="per">Perihelion (AU)</option>
+              <option value="dev">v∞ drift from ideal (km/s)</option>
+            </select></label>
+            <label>y <select id="ax-y">
+              <option value="period">Period (yr)</option>
+              <option value="dv" selected>ΔV / cycle (km/s, log)</option>
+              <option value="vmax">Max v∞ (km/s)</option>
+              <option value="c3">Launch C3 (km²/s²)</option>
+              <option value="leo">ΔV from LEO (km/s)</option>
+              <option value="aph">Aphelion (AU)</option>
+              <option value="per">Perihelion (AU)</option>
+              <option value="dev">v∞ drift from ideal (km/s)</option>
+            </select></label>
+          </div>
+        </div>
+        <div class="legend" id="ideal-legend"></div>
+        <div class="plot" id="ideal-scatter"></div>
+        <p class="note" id="ideal-plot-note"></p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2 id="orbit-title">Trajectory</h2></div>
+        <div class="orbit-wrap"><canvas id="orbit"></canvas><div class="orbit-empty" id="orbit-empty">Select a cycler</div></div>
+        <div class="orbit-ctl">
+          <button id="o-play" class="ghost" title="Play / pause">▶</button>
+          <input id="o-time" type="range" min="0" max="1000" value="0" aria-label="Time">
+          <span id="o-clock" class="mono"></span>
+        </div>
+        <div class="orbit-ctl">
+          <div class="seg" id="o-frame">
+            <button data-v="inertial" aria-pressed="true">Inertial</button>
+            <button data-v="rotating" aria-pressed="false">Rotating (home fixed)</button>
+          </div>
+          <label class="inline" id="o-cycles-l">Cycles <select id="o-cycles"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>6</option></select></label>
+          <label class="inline">Speed <select id="o-speed"><option value="0.5">½×</option><option value="1" selected>1×</option><option value="3">3×</option><option value="8">8×</option></select></label>
+        </div>
+        <div id="detail" class="detail"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <h2>Cyclers <span class="count" id="ideal-count"></span></h2>
+        <button class="ghost" id="ideal-csv">Download CSV</button>
+      </div>
+      <div class="table-wrap"><table id="ideal-table"></table></div>
+      <button class="ghost more" id="ideal-more">Show more</button>
+    </div>
+  </section>
+
+  <!-- ============ Real-planet windows ============ -->
+  <section id="tab-ephem" class="tab" hidden>
+    <div class="card intro">
+      <p>Every cycler re-solved on the <b>real</b> planets (VSOP2013 ephemeris: eccentric, inclined orbits) for each launch opportunity between 2030 and 2060. Each point is one launch window flown for 4 cycles (2 for periods over 8 years). <button class="link" data-goto="method#m-real">How this works →</button></p>
+    </div>
+    <div class="filters" id="ephem-filters">
+      <label class="f-search"><span>Cycler</span><select id="e-label"><option value="">All cyclers</option></select></label>
+      <div class="f-group"><span>Family</span>
+        <div class="seg" id="e-fam">
+          <button data-v="all" aria-pressed="true">All</button>
+          <button data-v="single_home" aria-pressed="false">Single-assist</button>
+          <button data-v="sequence" aria-pressed="false">Multi-assist</button>
+        </div>
+      </div>
+      <div class="f-group"><span>Planets</span><div class="chips" id="e-sys"></div></div>
+      <label class="f-range"><span>Max ΔV / cycle <b id="e-dv-v"></b></span><input id="e-dv" type="range" min="-3" max="2" step="0.05"></label>
+      <label class="f-range"><span>Max v∞ <b id="e-vinf-v"></b></span><input id="e-vinf" type="range" min="1" max="40" step="0.5"></label>
+      <label class="f-range" title="Launch energy C3 = v∞² to board the cycler at the window's first Earth encounter"><span>Max launch C3 <b id="e-c3-v"></b></span><input id="e-c3" type="range" min="0" max="150" step="2"></label>
+      <label class="f-range" title="How far the real encounter speeds strayed from the ideal cycler's"><span>Max v∞ drift <b id="e-dev-v"></b></span><input id="e-dev" type="range" min="0" max="15" step="0.25"></label>
+      <div class="f-group"><span>Launch years <b id="e-yr-v"></b></span>
+        <div class="yr-range"><input id="e-y0" type="range" min="2030" max="2060" step="1" aria-label="Launch from"><input id="e-y1" type="range" min="2030" max="2060" step="1" aria-label="Launch to"></div>
+      </div>
+      <div class="f-checks">
+        <label><input type="checkbox" id="e-conv" checked> Converged only</label>
+        <label><input type="checkbox" id="e-ball"> Ballistic only</label>
+        <label><input type="checkbox" id="e-earth"> Visits Earth</label>
+      </div>
+      <button class="ghost" id="e-reset">Reset</button>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-head"><h2 id="ephem-plot-title">Launch windows 2030–2060</h2>
+          <div class="axis-pick">
+            <label>x <select id="e-ax-x">
+            <option value="date">Launch date</option>
+            <option value="dv">ΔV / cycle (km/s, log)</option>
+            <option value="worst">Worst-cycle ΔV (km/s, log)</option>
+            <option value="vmax">Max v∞ (km/s)</option>
+            <option value="c3">Launch C3 at Earth (km²/s²)</option>
+            <option value="leo">ΔV from LEO (km/s)</option>
+            <option value="dev">v∞ drift from ideal (km/s)</option>
+            </select></label>
+            <label>y <select id="e-ax-y">
+            <option value="date">Launch date</option>
+            <option value="dv" selected>ΔV / cycle (km/s, log)</option>
+            <option value="worst">Worst-cycle ΔV (km/s, log)</option>
+            <option value="vmax">Max v∞ (km/s)</option>
+            <option value="c3">Launch C3 at Earth (km²/s²)</option>
+            <option value="leo">ΔV from LEO (km/s)</option>
+            <option value="dev">v∞ drift from ideal (km/s)</option>
+            </select></label>
+          </div>
+        </div>
+        <div class="legend" id="ephem-legend"></div>
+        <div class="plot" id="ephem-scatter"></div>
+        <p class="note">Powered flybys only; encounter dates optimised within ±45 days of the ideal schedule. A large v∞ drift means the optimiser found a different (if cheap) cycler rather than the ideal one.</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2 id="eorbit-title">Real-planet trajectory</h2></div>
+        <div class="orbit-wrap"><canvas id="eorbit"></canvas><div class="orbit-empty" id="eorbit-empty">Select a launch window</div></div>
+        <div class="orbit-ctl">
+          <button id="e-play" class="ghost" title="Play / pause">▶</button>
+          <input id="e-time" type="range" min="0" max="1000" value="0" aria-label="Time">
+          <span id="e-clock" class="mono"></span>
+        </div>
+        <div class="orbit-ctl">
+          <div class="seg" id="e-frame">
+            <button data-v="inertial" aria-pressed="true">Inertial</button>
+            <button data-v="rotating" aria-pressed="false">Rotating (home fixed)</button>
+          </div>
+          <label class="inline">Speed <select id="e-speed"><option value="0.5">½×</option><option value="1" selected>1×</option><option value="3">3×</option><option value="8">8×</option></select></label>
+        </div>
+        <div id="edetail" class="detail"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Windows <span class="count" id="ephem-count"></span></h2>
+        <button class="ghost" id="ephem-csv">Download CSV</button></div>
+      <div class="table-wrap"><table id="ephem-table"></table></div>
+      <button class="ghost more" id="ephem-more">Show more</button>
+    </div>
+  </section>
+
+  <!-- ============ Validation ============ -->
+  <section id="tab-valid" class="tab" hidden>
+    <div class="card intro" id="valid-intro"></div>
+    <div class="grid2" id="vviewer">
+      <div class="card">
+        <div class="card-head"><h2 id="vorbit-title">Trajectory</h2></div>
+        <div class="orbit-wrap"><canvas id="vorbit"></canvas><div class="orbit-empty" id="vorbit-empty">Click any row below</div></div>
+        <div class="orbit-ctl">
+          <button id="v-play" class="ghost" title="Play / pause">▶</button>
+          <input id="v-time" type="range" min="0" max="1000" value="0" aria-label="Time">
+          <span id="v-clock" class="mono"></span>
+        </div>
+        <div class="orbit-ctl">
+          <div class="seg" id="v-frame">
+            <button data-v="inertial" aria-pressed="true">Inertial</button>
+            <button data-v="rotating" aria-pressed="false">Rotating (home fixed)</button>
+          </div>
+          <label class="inline" id="v-cycles-l">Cycles <select id="v-cycles"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>7</option></select></label>
+          <label class="inline">Speed <select id="v-speed"><option value="0.5">½×</option><option value="1" selected>1×</option><option value="3">3×</option><option value="8">8×</option></select></label>
+        </div>
+      </div>
+      <div class="card"><div class="card-head"><h2>Details</h2></div><div id="vdetail" class="detail"></div></div>
+    </div>
+    <div class="card" id="v-t4"></div>
+    <div class="card" id="v-t6"></div>
+    <div class="card" id="v-s1l1"></div>
+    <div class="card" id="v-aldrin"></div>
+  </section>
+
+  <!-- ============ Method / documentation ============ -->
+  <section id="tab-method" class="tab" hidden>
+    <div class="method">
+      <nav class="toc card" id="toc"></nav>
+      <article class="card prose" id="doc">
+        <h2 id="m-what">1. What is a cycler?</h2>
+        <p>A <b>cycler</b> is a spacecraft orbit around the Sun that keeps meeting two or more planets on a regular schedule, using each planet's gravity (a <i>gravity assist</i> or <i>flyby</i>) to bend its path so that the pattern repeats. Once a large vehicle is on a cycler it can stay there indefinitely, carrying crews and cargo back and forth while small "taxi" craft shuttle people between the planets and the passing cycler. The best-known example is the <b>Aldrin cycler</b>, which meets Earth and Mars every 2.14 years.</p>
+        <p>A cycler is <b>ballistic</b> if the flybys alone can do all the steering; otherwise it is <b>powered</b> and needs a rocket burn (ΔV, a change of velocity) on every cycle. The catalogue's main cost number is that burn: <b>ΔV per cycle</b>.</p>
+
+        <h2 id="m-models">2. Two models of the solar system: ideal and real</h2>
+        <p>Everything in this catalogue is computed twice.</p>
+        <div class="cmp-wrap"><table class="cmp">
+          <thead><tr><th></th><th>Ideal model</th><th>Real planets</th></tr></thead>
+          <tbody>
+            <tr><td>Planet orbits</td><td>Circles, all in one plane, at the planets' mean distances</td><td>VSOP2013 analytic ephemeris (eccentric, inclined; arcsecond accuracy), J2000 ecliptic frame</td></tr>
+            <tr><td>Does the cycler repeat exactly?</td><td>Yes. The Earth–Mars geometry repeats every synodic period, so one cycle defines the cycler forever.</td><td>No. Every cycle is a little different, so a cycler only exists as a specific sequence of dates.</td></tr>
+            <tr><td>What a row means</td><td>One cycler: a named, countable object (e.g. 1L1)</td><td>One launch window, 2030–2060, flown for several cycles</td></tr>
+            <tr><td>Used for</td><td>Finding and naming cyclers; reproducing the published tables</td><td>What it would actually cost to fly</td></tr>
+          </tbody></table></div>
+        <p><b>Why keep the ideal model?</b> Because without it there is nothing to search for: in the real solar system no orbit repeats exactly, so the literature (Hollister, Byrnes, McConaghy, Russell &amp; Ocampo) defines cycler <i>families</i> in the ideal model and then looks for the real-world version of each. This project follows the same two-step approach. The papers it is validated against also state that their tables use circular, coplanar orbits (see <a href="#" data-goto="valid">Validation</a>).</p>
+        <p><b>What the ideal model gets wrong.</b> Mars' orbit is quite eccentric (0.093): its distance from the Sun varies between 1.38 and 1.67 AU. Its 1.85° tilt and Venus' 3.39° tilt also add out-of-plane velocity at the flybys. In practice a few families hold up well on real planets: the 8-year Venus–Earth cyclers (5 synodic periods, e.g. 5S3) stay under 0.1 km/s per cycle in every window with encounter speeds within about 0.4 km/s of ideal, and the 15-year Earth–Mars family stays nearly ballistic. Most cyclers degrade: encounter speeds drift by several km/s and they need ΔV every cycle. Of the 97 cyclers that are ballistic in the ideal model, only 30 keep a ballistic window on real planets. The <b>Ideal / Real planets</b> switch on the Catalogue tab shows both numbers for every cycler.</p>
+        <p><b>How real-planet values are summarised.</b> Each cycler has many launch windows (one per synodic period, about 14 for Earth–Mars over 30 years). In Real-planets mode the catalogue shows the <b>median</b> over converged windows, with the lowest and highest window in the tooltip and detail panel. Because the real geometry changes from one launch date to the next, individual windows land above or below the ideal value, so the lowest real value (of ΔV, v∞ or C3) is often <i>better</i> than the ideal one. That is expected; compare medians. "Ballistic" becomes "has at least one ballistic window". All windows are on the <a href="#" data-goto="ephem">Real-planet windows</a> tab.</p>
+
+        <h2 id="m-pipeline">3. Pipeline</h2>
+        <figure class="diagram" aria-label="Pipeline diagram">
+          <svg viewBox="0 0 760 170" role="img">
+            <g class="d-box"><rect x="6" y="20" width="160" height="58" rx="8"/><text x="86" y="44">1 · Single-assist</text><text x="86" y="62" class="d-sub">Lambert arcs, all pairs</text></g>
+            <g class="d-box"><rect x="6" y="96" width="160" height="58" rx="8"/><text x="86" y="120">2 · Multi-assist</text><text x="86" y="138" class="d-sub">global search, EM EV MV VEM</text></g>
+            <g class="d-box"><rect x="226" y="58" width="170" height="58" rx="8"/><text x="311" y="82">Ideal catalogue</text><text x="311" y="100" class="d-sub">circular coplanar model</text></g>
+            <g class="d-box"><rect x="456" y="58" width="150" height="58" rx="8"/><text x="531" y="82">3 · Real planets</text><text x="531" y="100" class="d-sub">VSOP2013, 2030–2060</text></g>
+            <g class="d-box"><rect x="646" y="58" width="108" height="58" rx="8"/><text x="700" y="82">SQLite + web</text><text x="700" y="100" class="d-sub">this site</text></g>
+            <path class="d-arrow" d="M166 49 C196 49 196 80 224 80"/><path class="d-arrow" d="M166 125 C196 125 196 94 224 94"/>
+            <path class="d-arrow" d="M396 87 L454 87"/><path class="d-arrow" d="M606 87 L644 87"/>
+            <path class="d-arrow dash" d="M311 116 C311 150 700 150 700 118"/>
+          </svg>
+        </figure>
+        <p>Stages 1 and 2 build the ideal catalogue. Stage 3 takes every cycler from it (except home-only orbits, which are not cyclers) and re-solves it on the real planets for every launch window. Everything is written to <code>data/cyclers.sqlite</code>, then exported for this site by <code>scripts/export_web.py</code>.</p>
+
+        <h2 id="m-single">4. Stage 1: single-assist cyclers</h2>
+        <p>The construction is the one of McConaghy, Longuski &amp; Byrnes. A spacecraft leaves a <i>home</i> planet H and must come back to H after exactly <i>n</i> synodic periods of the pair (H, target). Then the H–target geometry is the same as at departure, so the same orbit, rotated, can be flown again, forever. Finding the orbit is a <b>Lambert problem</b>: connect H's position now to H's position <i>n</i> synodic periods later, in exactly that time. For each <i>n</i> there are several solutions, with different numbers of full revolutions <i>r</i> around the Sun.</p>
+        <p>Because the home planet has moved on by an angle ΔΨ (51.4° per Earth–Mars synodic period), the orbit has to be rotated by ΔΨ every cycle. The flyby at H does that rotation. If the planet can't bend the path far enough while staying above the minimum flyby altitude (Venus 300 km, Earth and Mars 200 km), a powered flyby makes up the difference. That burn is the cycler's ΔV per cycle. The target planet is met wherever the arc crosses its orbit, and needs no turn.</p>
+        <p><b>Why "single-assist".</b> Each cycle has exactly one gravity assist, always at the home planet; the second planet is only passed, not used for steering. The literature has no single settled name for this family (McConaghy et al. build it from "consecutive collision orbits"; Hollister and Byrnes call it simply a cycler), so this catalogue names it by that defining property. Its counterpart, <b>multi-assist</b>, uses gravity assists at several encounters per cycle. (In the database the two tables are still called <code>single_home</code> and <code>sequence</code>.)</p>
+        <p>All six ordered pairs (EM, ME, EV, VE, MV, VM) are enumerated up to 16 years and 12 revolutions: 1,089 solutions. Some arcs never reach the target planet's orbit; these <b>home-only orbits</b> are valid periodic orbits of the home planet but not cyclers, so they are listed separately.</p>
+        <h3 id="m-notation">Notation: nPr</h3>
+        <p>Single-assist cyclers are named as in McConaghy et al.: <b><i>n</i>P<i>r</i></b>, where <i>n</i> is the number of synodic periods per cycle, <i>r</i> the number of complete revolutions, and P is <b>L</b> (long period), <b>S</b> (short period) or <b>U</b> (unique). For each <i>r</i> ≥ 1 there are two Lambert solutions; the one with the larger semimajor axis (longer orbital period, higher energy) is L. With fewer than one revolution there is a single solution, U. The Aldrin cycler is <b>1L1</b>; the 1-synodic-period cyclers are 1U0, 1L1, 1S1, 1L2, 1S2, 1L3 and 1S3. The same notation is used here for every planet pair, not only Earth–Mars.</p>
+
+        <h2 id="m-multi">5. Stage 2: multi-assist cyclers</h2>
+        <p>These cyclers meet planets in a longer pattern, for example <b>EEM</b> (Earth, Earth, Mars) or <b>EMEV</b>, with a gravity assist at every encounter. A pattern repeats when the cycle period is a whole number of synodic periods, rotated by the home planet's advance. For each pattern and period, the free variables are the duration of each leg and the starting phases of the other planets. A global optimiser (differential evolution, two random seeds) followed by a Nelder–Mead polish minimises the total ΔV per cycle. On each leg there are several Lambert solutions (different revolution counts and branches); the best combination around the closed cycle is chosen exactly with a cyclic dynamic program, so the optimiser only ever sees the cost of the best choice.</p>
+        <p><b>Three-planet (Venus–Earth–Mars) cyclers</b> can't repeat exactly, because no period is an exact multiple of all three synodic periods. They use near-commensurate periods (6.41 and 12.81 years) and report the <b>phase drift</b>, how far the third planet slips per cycle (under 10° here). Real-planet continuation absorbs the drift.</p>
+        <p>Solutions closer than 2 m/s in ΔV with matching encounter speeds are treated as duplicates; 177 distinct cyclers remain. The drawn trajectory is re-solved from the stored (rounded) leg times; where that changes the cost by more than 10 m/s the detail panel says so.</p>
+
+        <h2 id="m-real">6. Stage 3: real planets</h2>
+        <ol>
+          <li><b>Launch windows.</b> For each cycler, find every date between 2030 and 2060 at which the real planets stand in the same relative positions as in the ideal cycler (one per synodic period for two-planet cyclers; local best matches for three-planet ones).</li>
+          <li><b>Chain.</b> From each date, lay out the ideal encounter schedule for 4 cycles (2 if the period is over 8 years). Each leg is a Lambert arc between the real planet positions on the encounter dates, with the same number of revolutions as the ideal cycler; Lambert branches are again chosen by dynamic programming, preferring speeds close to the ideal ones.</li>
+          <li><b>Optimise.</b> Every encounter date may move by up to ±45 days. Powell's method minimises the total powered-flyby ΔV.</li>
+          <li><b>Report</b> per window: ΔV per cycle (average), the worst single cycle, the highest encounter speed at each planet, the encounter dates, and the <b>v∞ drift</b>: the largest difference between a real encounter speed and the ideal one. A large drift (several km/s) means the optimiser has slid into a different cycler that happens to be cheap at that date.</li>
+        </ol>
+        <p>This is a local search around the ideal schedule, with powered flybys as the only manoeuvres, so real-planet costs are <i>upper bounds</i>: a global search or deep-space manoeuvres could find cheaper versions (see Limitations).</p>
+
+        <h2 id="m-costs">7. Costs and definitions</h2>
+        <dl class="defs">
+          <dt>v∞ (hyperbolic excess speed)</dt><dd>The spacecraft's speed relative to a planet, far from it. It sets how hard the flyby is and how much energy a taxi needs to meet the cycler.</dd>
+          <dt>ΔV per cycle</dt><dd>Sum over the cycle's flybys of the impulsive ΔV needed to patch the incoming and outgoing v∞ (pykep <code>fb_dv</code>, applied to the v∞ vector, which is an upper bound on a burn at closest approach).</dd>
+          <dt>Ballistic</dt><dd>ΔV per cycle ≤ 1 m/s. In Real-planets mode: at least one launch window at ≤ 1 m/s per cycle.</dd>
+          <dt>Boarding cost: launch C3</dt><dd>The energy per unit mass to leave Earth onto the cycler's hyperbola, C3 = v∞² (km²/s²), using the v∞ at an Earth flyby (the lowest one for multi-assist cyclers). Empty for cyclers that never meet Earth.</dd>
+          <dt>ΔV from LEO</dt><dd>The single burn from a 200 km circular parking orbit to that hyperbola, √(v∞² + 2μ/r) − √(μ/r). A one-time cost, separate from the ΔV per cycle.</dd>
+          <dt>Synodic period</dt><dd>The time for two planets to return to the same relative position: 2.14 years for Earth–Mars, 1.60 for Earth–Venus, 0.91 for Venus–Mars.</dd>
+          <dt>Aphelion / perihelion</dt><dd>The cycler orbit's farthest and closest distance from the Sun (AU).</dd>
+          <dt>Turn angle</dt><dd>How far a flyby bends the v∞ vector. The maximum is set by the planet's mass and the minimum flyby altitude.</dd>
+          <dt>SEP screen</dt><dd>A lower bound on the constant acceleration a solar-electric engine would need to deliver the worst cycle's ΔV over one cycle. Experimental.</dd>
+        </dl>
+
+        <h2 id="m-valid">8. Validation</h2>
+        <p>The code is checked against four published results; all are reproduced. Details, with every number and a plot for each row, are on the <a href="#" data-goto="valid">Validation</a> tab.</p>
+        <ul>
+          <li><b>McConaghy, Longuski &amp; Byrnes (2002, 2004), Table 4</b>: 19 Earth–Mars cyclers, every column (aphelion, v∞ at Earth and Mars, transfer time, required and maximum turn angle, ballistic). Reproduced in their own model: circular coplanar orbits, Mars period 1 7/8 years. They did <i>not</i> use eccentric orbits for this table.</li>
+          <li><b>McConaghy et al. (2002), Table 6</b>: three two-synodic-period cyclers with an extra Earth flyby (including the "ballistic S1L1").</li>
+          <li><b>McConaghy et al. (2004), Table 6</b>: a 30-year itinerary of the ballistic S1L1 cycler on <i>real</i> ephemerides (JPL DE405), with 22 dated encounters. This checks the real-planet machinery.</li>
+          <li><b>Byrnes, Longuski &amp; Aldrin (1993)</b>: the Aldrin cycler's encounter speeds and transfer time, and (as a comparison) its cost on real planets.</li>
+        </ul>
+        <p><b>One reconstructed convention.</b> For the five Table 4 cyclers whose aphelion falls short of Mars' orbit, the paper's transfer time is labelled "time to transfer from Earth to aphelion". The exact time to aphelion comes out 8–10 days longer than every printed value. The time to reach <b>99.9% of the aphelion radius</b> matches all five within 0.4 days, which is what a radius-based root-finder with a 0.1% tolerance would return: near aphelion the radius barely changes, so a tiny radius tolerance moves the time by days. The paper doesn't say this; it is inferred from the numbers, and both values are shown.</p>
+
+        <h2 id="m-limits">9. Limitations</h2>
+        <ul>
+          <li><b>Ideal model is 2-D.</b> Stages 1–2 ignore eccentricity and inclination; only stage 3 includes them.</li>
+          <li><b>Local real-planet search.</b> Encounter dates move only ±45 days around the ideal schedule. A global search per window would find more cheap windows.</li>
+          <li><b>No deep-space manoeuvres.</b> Only powered flybys. A burn mid-leg (as in Russell &amp; Ocampo) usually lowers real-planet costs.</li>
+          <li><b>Rounded dates in drawings.</b> Real-planet encounter dates are stored to the day, and the drawn trajectory is rebuilt from them, so it can differ slightly from the optimised one.</li>
+          <li><b>Not modelled:</b> resonant cyclers whose period is a whole number of years (n = 7 for Earth–Mars, e.g. the VISIT cyclers), half-revolution "backflip" legs, and Moon or Jupiter perturbations.</li>
+          <li><b>Low thrust is experimental.</b> Only a lower-bound acceleration screen is reported.</li>
+        </ul>
+
+        <h2 id="m-refs">10. References</h2>
+        <ol class="refs">
+          <li>McConaghy, T. T., Longuski, J. M., and Byrnes, D. V., "Analysis of a Broad Class of Earth–Mars Cycler Trajectories," AIAA Paper 2002-4420, 2002.</li>
+          <li>McConaghy, T. T., Longuski, J. M., and Byrnes, D. V., "Analysis of a Class of Earth–Mars Cycler Trajectories," <i>Journal of Spacecraft and Rockets</i>, 41(4), 622–628, 2004.</li>
+          <li>Byrnes, D. V., Longuski, J. M., and Aldrin, B., "Cycler Orbit Between Earth and Mars," <i>Journal of Spacecraft and Rockets</i>, 30(3), 334–336, 1993.</li>
+          <li>Hollister, W. M., "Periodic Orbits for Interplanetary Flight," <i>Journal of Spacecraft and Rockets</i>, 6(4), 1969.</li>
+          <li>Russell, R. P., and Ocampo, C. A., "Systematic Method for Constructing Earth–Mars Cyclers Using Free-Return Trajectories," <i>Journal of Guidance, Control, and Dynamics</i>, 27(3), 2004.</li>
+          <li>Izzo, D. et al., pykep and pygmo (ESA). Lambert solver, flyby model and VSOP2013 ephemeris used throughout.</li>
+        </ol>
+
+        <h2 id="m-repro">11. Reproduce and cite</h2>
+        <p>The code, database and this site are open source under the MIT License. To rebuild everything: install the environment (see the README), then run <code>scripts/build_catalog.py</code> (about 25 minutes for the ideal catalogue plus about an hour for the real-planet stage on 15 cores), <code>scripts/validate_mcconaghy.py</code> and <code>scripts/export_web.py</code>. If you use the code or the catalogue, please credit the project (see <code>CITATION.cff</code>) and cite the original papers above.</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>cyclerdb · © 2026 Sharif Mutasim · <a href="https://opensource.org/license/mit" target="_blank" rel="noopener">MIT License</a> — free to use; keep the copyright notice and credit this project when you reuse it.</span>
+</footer>
+
+<div id="tip" class="tip" hidden></div>
+
+<script src="catalog.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+# local environment and tools
+.env/
+.tools/
+__pycache__/
+.pytest_cache/
+
+# copyrighted papers kept locally for reference (AIAA); cite them, don't redistribute
+*.pdf
+
+# run logs and the earlier Linux build kept for comparison
+data_linux/
+data/*.log
+
+# resumable caches: large and fully regenerable (the SQLite database and web/ data are kept)
+data/ephemeris_raw.jsonl

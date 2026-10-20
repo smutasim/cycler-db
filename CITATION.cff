@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use cyclerdb or its catalogue, please cite it as below."
+title: "cyclerdb: a Venus / Earth / Mars cycler trajectory catalogue"
+type: software
+authors:
+  - family-names: Mutasim
+    given-names: Sharif
+version: 0.1.0
+date-released: 2026-10-18
+license: MIT
+keywords:
+  - cycler trajectories
+  - gravity assist
+  - astrodynamics
+  - Mars
+  - Venus
+  - pykep
+references:
+  - type: conference-paper
+    title: "Analysis of a Broad Class of Earth-Mars Cycler Trajectories"
+    authors:
+      - family-names: McConaghy
+        given-names: T. Troy
+      - family-names: Longuski
+        given-names: James M.
+      - family-names: Byrnes
+        given-names: Dennis V.
+    conference:
+      name: "AIAA/AAS Astrodynamics Specialist Conference"
+    year: 2002
+    notes: "AIAA 2002-4420"
+  - type: article
+    title: "Cycler Orbit Between Earth and Mars"
+    authors:
+      - family-names: Byrnes
+        given-names: Dennis V.
+      - family-names: Longuski
+        given-names: James M.
+      - family-names: Aldrin
+        given-names: Buzz
+    journal: "Journal of Spacecraft and Rockets"
+    volume: 30
+    issue: 3
+    year: 1993

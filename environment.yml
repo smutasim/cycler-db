@@ -1,0 +1,14 @@
+# conda / mamba environment (works on Windows, where pykep has no PyPI wheel).
+#   micromamba create -p .env -f environment.yml
+name: cyclerdb
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pykep>=3.0.0
+  - pygmo
+  - libopenblas   # kep3.dll links openblas.dll; the default Windows BLAS (MKL) does not provide it
+  - numpy>=2.0
+  - scipy>=1.13
+  - pandas>=2.2
+  - pytest>=8

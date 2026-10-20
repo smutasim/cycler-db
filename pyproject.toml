@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cyclerdb"
+version = "0.1.0"
+description = "Search, validate and catalogue Venus / Earth / Mars cycler trajectories"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [{ name = "Sharif Mutasim" }]
+requires-python = ">=3.10"
+dependencies = ["pykep>=3.0.0", "pygmo>=2.19", "numpy>=2.0", "scipy>=1.13", "pandas>=2.2"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.setuptools]
+packages = ["cyclerdb"]
+
+[tool.pytest.ini_options]
+markers = ["slow: takes tens of seconds (real-ephemeris reproduction)"]

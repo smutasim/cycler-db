@@ -1,0 +1,6 @@
+pykep>=3.0.1      # ESA: Lambert solver, flyby model, VSOP2013 ephemeris, Sims-Flanagan legs
+pygmo>=2.20       # ESA: IPOPT / NLopt-SLSQP for the low-thrust legs
+numpy>=2.0
+scipy>=1.13       # differential evolution, Powell, Nelder-Mead
+pandas>=2.2
+pytest>=8         # tests only
