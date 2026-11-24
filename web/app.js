@@ -1,7 +1,7 @@
 "use strict";
 // Copyright (c) 2026 Sharif Mutasim
 // SPDX-License-Identifier: MIT
-/* Cycler Catalogue web UI. Data comes from catalog.js (window.CATALOG),
+/* Cycler Catalog web UI. Data comes from catalog.js (window.CATALOG),
    written by scripts/export_web.py. No dependencies. */
 
 const D = window.CATALOG;
@@ -563,7 +563,7 @@ const bestWindow = (label) => (EPH_BY_LABEL[label] || []).filter((w) => w.conver
   .sort((a, b) => a.dv_per_cycle_kms - b.dv_per_cycle_kms)[0];
 
 // ---------------------------------------------------------------------------
-// Catalogue tab (ideal / real-planet toggle)
+// Catalog tab (ideal / real-planet toggle)
 // ---------------------------------------------------------------------------
 let MODE = "ideal";
 const num = (v) => (v == null ? NaN : v);
@@ -792,7 +792,7 @@ function idealDetail(r) {
       `</tbody></table></div>` + kv([["Phase drift / cycle", x.drift_deg.split("|").map((d) => d.replace(":", " ") + "°").join(", ")], ["Search seed", x.seed]]);
     const rdv = r.traj?.recomputed_dv_kms;
     if (rdv != null && Math.abs(rdv - r.dv) > 0.01) {
-      html += `<p class="note">The drawn ideal trajectory was re-solved from the catalogue's rounded leg times and costs ${fmt(rdv, 3)} km/s per cycle rather than ${fmt(r.dv, 3)}.</p>`;
+      html += `<p class="note">The drawn ideal trajectory was re-solved from the catalog's rounded leg times and costs ${fmt(rdv, 3)} km/s per cycle rather than ${fmt(r.dv, 3)}.</p>`;
     }
   }
   if (r.fam !== "home_only") html += boardingHtml(r.ev, r.c3, r.leo, r.fam === "sequence" ? "its lowest-v∞ Earth flyby (ideal model)" : "the Earth flyby (ideal model)");
@@ -945,7 +945,7 @@ function ephemDetail(r, tr) {
       }).join("") + `</tbody></table></div>`;
   }
   html += boardingHtml(r.ev, r.c3, r.leo, "the first Earth encounter of this window");
-  if (IDEAL_BY_ID[r.label]) html += `<p><button class="link to-ideal">View the cycler in the catalogue →</button></p>`;
+  if (IDEAL_BY_ID[r.label]) html += `<p><button class="link to-ideal">View the cycler in the catalog →</button></p>`;
   return html;
 }
 
@@ -1064,8 +1064,8 @@ function renderValidation() {
   // Aldrin on real planets (comparison)
   const P = al.paper, rng = (a) => (a ? `${a[0]}–${a[1]}` : "—");
   $("#v-aldrin").innerHTML = `<div class="card-head"><h2>Aldrin cycler on real planets — comparison, not pass/fail</h2></div>
-    <p class="note" style="margin:0 0 8px">Byrnes, Longuski &amp; Aldrin (1993), as summarised in McConaghy et al. (2004), optimised the Aldrin cycler over a full 15-year period in an accurate solar-system model. Their dates are not given, and their optimiser was more thorough than this catalogue's (whole-trajectory optimisation, not a ±45-day local search with powered flybys only, over 4 cycles per window). So the numbers below are a sanity check of scale, not a reproduction.</p>
-    <div class="table-wrap"><table class="vt"><thead><tr><th></th><th class="num">Byrnes et al. (1993)</th><th class="num">This catalogue, 1L1, ${al.n_windows} windows 2030–2060</th></tr></thead><tbody>
+    <p class="note" style="margin:0 0 8px">Byrnes, Longuski &amp; Aldrin (1993), as summarised in McConaghy et al. (2004), optimised the Aldrin cycler over a full 15-year period in an accurate solar-system model. Their dates are not given, and their optimiser was more thorough than this catalog's (whole-trajectory optimisation, not a ±45-day local search with powered flybys only, over 4 cycles per window). So the numbers below are a sanity check of scale, not a reproduction.</p>
+    <div class="table-wrap"><table class="vt"><thead><tr><th></th><th class="num">Byrnes et al. (1993)</th><th class="num">This catalog, 1L1, ${al.n_windows} windows 2030–2060</th></tr></thead><tbody>
       <tr><td>ΔV per synodic period (m/s)</td><td class="num">${P.outbound_dv_per_synodic_ms} outbound · ${P.inbound_dv_per_synodic_ms} inbound (15-yr averages)</td><td class="num">median ${al.ours_dv_per_synodic_ms_median ?? "—"} · best ${al.ours_dv_per_synodic_ms_best ?? "—"} · worst ${al.ours_dv_per_synodic_ms_worst ?? "—"}</td></tr>
       <tr><td>Earth → Mars transfer (days)</td><td class="num">${rng(P.transfer_days)}</td><td class="num">${rng(al.ours_transfer_days)}</td></tr>
       <tr><td>v∞ at Earth (km/s)</td><td class="num">${rng(P.vinf_earth_kms)}</td><td class="num">${rng(al.ours_vinf_earth_kms)}</td></tr>
@@ -1106,7 +1106,7 @@ function selectValidation(kind, key) {
       ["ΔV per cycle (ours)", fmtDv(r.ours_dv_per_cycle_kms) + " km/s"],
       ["Perihelion / e", `${fmt(r.perihelion_au, 3)} AU / ${fmt(r.e, 3)}`],
     ]) + `<p class="note">Mars v∞: ${esc(r.vinf_mars_definition)}. Transfer: ${esc(r.transfer_definition)}.</p>` +
-      (IDEAL_BY_ID[r.catalogue_id] ? `<p><button class="link to-cat">Open the catalogue version (mean planetary elements, real planets) →</button></p>` : "");
+      (IDEAL_BY_ID[r.catalogue_id] ? `<p><button class="link to-cat">Open the catalog version (mean planetary elements, real planets) →</button></p>` : "");
   } else if (kind === "t6") {
     const r = VD.table6_2002.find((x) => x.cycler === key);
     if (!r || !r.traj) return;

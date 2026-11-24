@@ -4,17 +4,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cycler Catalogue</title>
+<title>Cycler Catalog</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="top">
   <div class="brand">
-    <h1>Cycler Catalogue</h1>
+    <h1>Cycler Catalog</h1>
     <p class="sub">Venus · Earth · Mars cycler trajectories — <span id="meta-line"></span></p>
   </div>
   <nav class="tabs" role="tablist">
-    <button role="tab" data-tab="ideal" aria-selected="true">Catalogue</button>
+    <button role="tab" data-tab="ideal" aria-selected="true">Catalog</button>
     <button role="tab" data-tab="ephem" aria-selected="false">Real-planet windows</button>
     <button role="tab" data-tab="valid" aria-selected="false">Validation</button>
     <button role="tab" data-tab="method" aria-selected="false">Method</button>
@@ -25,7 +25,7 @@
 <main>
   <section class="tiles" id="tiles"></section>
 
-  <!-- ============ Catalogue ============ -->
+  <!-- ============ Catalog ============ -->
   <section id="tab-ideal" class="tab">
     <div class="model-bar">
       <div class="seg big" id="model">
@@ -236,10 +236,10 @@
       <article class="card prose" id="doc">
         <h2 id="m-what">1. What is a cycler?</h2>
         <p>A <b>cycler</b> is a spacecraft orbit around the Sun that keeps meeting two or more planets on a regular schedule, using each planet's gravity (a <i>gravity assist</i> or <i>flyby</i>) to bend its path so that the pattern repeats. Once a large vehicle is on a cycler it can stay there indefinitely, carrying crews and cargo back and forth while small "taxi" craft shuttle people between the planets and the passing cycler. The best-known example is the <b>Aldrin cycler</b>, which meets Earth and Mars every 2.14 years.</p>
-        <p>A cycler is <b>ballistic</b> if the flybys alone can do all the steering; otherwise it is <b>powered</b> and needs a rocket burn (ΔV, a change of velocity) on every cycle. The catalogue's main cost number is that burn: <b>ΔV per cycle</b>.</p>
+        <p>A cycler is <b>ballistic</b> if the flybys alone can do all the steering; otherwise it is <b>powered</b> and needs a rocket burn (ΔV, a change of velocity) on every cycle. The catalog's main cost number is that burn: <b>ΔV per cycle</b>.</p>
 
         <h2 id="m-models">2. Two models of the solar system: ideal and real</h2>
-        <p>Everything in this catalogue is computed twice.</p>
+        <p>Everything in this catalog is computed twice.</p>
         <div class="cmp-wrap"><table class="cmp">
           <thead><tr><th></th><th>Ideal model</th><th>Real planets</th></tr></thead>
           <tbody>
@@ -249,15 +249,15 @@
             <tr><td>Used for</td><td>Finding and naming cyclers; reproducing the published tables</td><td>What it would actually cost to fly</td></tr>
           </tbody></table></div>
         <p><b>Why keep the ideal model?</b> Because without it there is nothing to search for: in the real solar system no orbit repeats exactly, so the literature (Hollister, Byrnes, McConaghy, Russell &amp; Ocampo) defines cycler <i>families</i> in the ideal model and then looks for the real-world version of each. This project follows the same two-step approach. The papers it is validated against also state that their tables use circular, coplanar orbits (see <a href="#" data-goto="valid">Validation</a>).</p>
-        <p><b>What the ideal model gets wrong.</b> Mars' orbit is quite eccentric (0.093): its distance from the Sun varies between 1.38 and 1.67 AU. Its 1.85° tilt and Venus' 3.39° tilt also add out-of-plane velocity at the flybys. In practice a few families hold up well on real planets: the 8-year Venus–Earth cyclers (5 synodic periods, e.g. 5S3) stay under 0.1 km/s per cycle in every window with encounter speeds within about 0.4 km/s of ideal, and the 15-year Earth–Mars family stays nearly ballistic. Most cyclers degrade: encounter speeds drift by several km/s and they need ΔV every cycle. Of the 97 cyclers that are ballistic in the ideal model, only 30 keep a ballistic window on real planets. The <b>Ideal / Real planets</b> switch on the Catalogue tab shows both numbers for every cycler.</p>
-        <p><b>How real-planet values are summarised.</b> Each cycler has many launch windows (one per synodic period, about 14 for Earth–Mars over 30 years). In Real-planets mode the catalogue shows the <b>median</b> over converged windows, with the lowest and highest window in the tooltip and detail panel. Because the real geometry changes from one launch date to the next, individual windows land above or below the ideal value, so the lowest real value (of ΔV, v∞ or C3) is often <i>better</i> than the ideal one. That is expected; compare medians. "Ballistic" becomes "has at least one ballistic window". All windows are on the <a href="#" data-goto="ephem">Real-planet windows</a> tab.</p>
+        <p><b>What the ideal model gets wrong.</b> Mars' orbit is quite eccentric (0.093): its distance from the Sun varies between 1.38 and 1.67 AU. Its 1.85° tilt and Venus' 3.39° tilt also add out-of-plane velocity at the flybys. In practice a few families hold up well on real planets: the 8-year Venus–Earth cyclers (5 synodic periods, e.g. 5S3) stay under 0.1 km/s per cycle in every window with encounter speeds within about 0.4 km/s of ideal, and the 15-year Earth–Mars family stays nearly ballistic. Most cyclers degrade: encounter speeds drift by several km/s and they need ΔV every cycle. Of the 97 cyclers that are ballistic in the ideal model, only 30 keep a ballistic window on real planets. The <b>Ideal / Real planets</b> switch on the Catalog tab shows both numbers for every cycler.</p>
+        <p><b>How real-planet values are summarised.</b> Each cycler has many launch windows (one per synodic period, about 14 for Earth–Mars over 30 years). In Real-planets mode the catalog shows the <b>median</b> over converged windows, with the lowest and highest window in the tooltip and detail panel. Because the real geometry changes from one launch date to the next, individual windows land above or below the ideal value, so the lowest real value (of ΔV, v∞ or C3) is often <i>better</i> than the ideal one. That is expected; compare medians. "Ballistic" becomes "has at least one ballistic window". All windows are on the <a href="#" data-goto="ephem">Real-planet windows</a> tab.</p>
 
         <h2 id="m-pipeline">3. Pipeline</h2>
         <figure class="diagram" aria-label="Pipeline diagram">
           <svg viewBox="0 0 760 170" role="img">
             <g class="d-box"><rect x="6" y="20" width="160" height="58" rx="8"/><text x="86" y="44">1 · Single-assist</text><text x="86" y="62" class="d-sub">Lambert arcs, all pairs</text></g>
             <g class="d-box"><rect x="6" y="96" width="160" height="58" rx="8"/><text x="86" y="120">2 · Multi-assist</text><text x="86" y="138" class="d-sub">global search, EM EV MV VEM</text></g>
-            <g class="d-box"><rect x="226" y="58" width="170" height="58" rx="8"/><text x="311" y="82">Ideal catalogue</text><text x="311" y="100" class="d-sub">circular coplanar model</text></g>
+            <g class="d-box"><rect x="226" y="58" width="170" height="58" rx="8"/><text x="311" y="82">Ideal catalog</text><text x="311" y="100" class="d-sub">circular coplanar model</text></g>
             <g class="d-box"><rect x="456" y="58" width="150" height="58" rx="8"/><text x="531" y="82">3 · Real planets</text><text x="531" y="100" class="d-sub">VSOP2013, 2030–2060</text></g>
             <g class="d-box"><rect x="646" y="58" width="108" height="58" rx="8"/><text x="700" y="82">SQLite + web</text><text x="700" y="100" class="d-sub">this site</text></g>
             <path class="d-arrow" d="M166 49 C196 49 196 80 224 80"/><path class="d-arrow" d="M166 125 C196 125 196 94 224 94"/>
@@ -265,12 +265,12 @@
             <path class="d-arrow dash" d="M311 116 C311 150 700 150 700 118"/>
           </svg>
         </figure>
-        <p>Stages 1 and 2 build the ideal catalogue. Stage 3 takes every cycler from it (except home-only orbits, which are not cyclers) and re-solves it on the real planets for every launch window. Everything is written to <code>data/cyclers.sqlite</code>, then exported for this site by <code>scripts/export_web.py</code>.</p>
+        <p>Stages 1 and 2 build the ideal catalog. Stage 3 takes every cycler from it (except home-only orbits, which are not cyclers) and re-solves it on the real planets for every launch window. Everything is written to <code>data/cyclers.sqlite</code>, then exported for this site by <code>scripts/export_web.py</code>.</p>
 
         <h2 id="m-single">4. Stage 1: single-assist cyclers</h2>
         <p>The construction is the one of McConaghy, Longuski &amp; Byrnes. A spacecraft leaves a <i>home</i> planet H and must come back to H after exactly <i>n</i> synodic periods of the pair (H, target). Then the H–target geometry is the same as at departure, so the same orbit, rotated, can be flown again, forever. Finding the orbit is a <b>Lambert problem</b>: connect H's position now to H's position <i>n</i> synodic periods later, in exactly that time. For each <i>n</i> there are several solutions, with different numbers of full revolutions <i>r</i> around the Sun.</p>
         <p>Because the home planet has moved on by an angle ΔΨ (51.4° per Earth–Mars synodic period), the orbit has to be rotated by ΔΨ every cycle. The flyby at H does that rotation. If the planet can't bend the path far enough while staying above the minimum flyby altitude (Venus 300 km, Earth and Mars 200 km), a powered flyby makes up the difference. That burn is the cycler's ΔV per cycle. The target planet is met wherever the arc crosses its orbit, and needs no turn.</p>
-        <p><b>Why "single-assist".</b> Each cycle has exactly one gravity assist, always at the home planet; the second planet is only passed, not used for steering. The literature has no single settled name for this family (McConaghy et al. build it from "consecutive collision orbits"; Hollister and Byrnes call it simply a cycler), so this catalogue names it by that defining property. Its counterpart, <b>multi-assist</b>, uses gravity assists at several encounters per cycle. (In the database the two tables are still called <code>single_home</code> and <code>sequence</code>.)</p>
+        <p><b>Why "single-assist".</b> Each cycle has exactly one gravity assist, always at the home planet; the second planet is only passed, not used for steering. The literature has no single settled name for this family (McConaghy et al. build it from "consecutive collision orbits"; Hollister and Byrnes call it simply a cycler), so this catalog names it by that defining property. Its counterpart, <b>multi-assist</b>, uses gravity assists at several encounters per cycle. (In the database the two tables are still called <code>single_home</code> and <code>sequence</code>.)</p>
         <p>All six ordered pairs (EM, ME, EV, VE, MV, VM) are enumerated up to 16 years and 12 revolutions: 1,089 solutions. Some arcs never reach the target planet's orbit; these <b>home-only orbits</b> are valid periodic orbits of the home planet but not cyclers, so they are listed separately.</p>
         <h3 id="m-notation">Notation: nPr</h3>
         <p>Single-assist cyclers are named as in McConaghy et al.: <b><i>n</i>P<i>r</i></b>, where <i>n</i> is the number of synodic periods per cycle, <i>r</i> the number of complete revolutions, and P is <b>L</b> (long period), <b>S</b> (short period) or <b>U</b> (unique). For each <i>r</i> ≥ 1 there are two Lambert solutions; the one with the larger semimajor axis (longer orbital period, higher energy) is L. With fewer than one revolution there is a single solution, U. The Aldrin cycler is <b>1L1</b>; the 1-synodic-period cyclers are 1U0, 1L1, 1S1, 1L2, 1S2, 1L3 and 1S3. The same notation is used here for every planet pair, not only Earth–Mars.</p>
@@ -333,7 +333,7 @@
         </ol>
 
         <h2 id="m-repro">11. Reproduce and cite</h2>
-        <p>The code, database and this site are open source under the MIT License. To rebuild everything: install the environment (see the README), then run <code>scripts/build_catalog.py</code> (about 25 minutes for the ideal catalogue plus about an hour for the real-planet stage on 15 cores), <code>scripts/validate_mcconaghy.py</code> and <code>scripts/export_web.py</code>. If you use the code or the catalogue, please credit the project (see <code>CITATION.cff</code>) and cite the original papers above.</p>
+        <p>The code, database and this site are open source under the MIT License. To rebuild everything: install the environment (see the README), then run <code>scripts/build_catalog.py</code> (about 25 minutes for the ideal catalog plus about an hour for the real-planet stage on 15 cores), <code>scripts/validate_mcconaghy.py</code> and <code>scripts/export_web.py</code>. If you use the code or the catalog, please credit the project (see <code>CITATION.cff</code>) and cite the original papers above.</p>
       </article>
     </div>
   </section>

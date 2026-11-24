@@ -1,13 +1,13 @@
-# cyclerdb — a Venus / Earth / Mars cycler catalogue
+# cyclerdb — a Venus / Earth / Mars cycler catalog
 
-Search, validate and catalogue **cycler trajectories**: orbits that shuttle a spacecraft
+Search, validate and catalog **cycler trajectories**: orbits that shuttle a spacecraft
 indefinitely between planets using gravity assists, ideally with no propulsive maneuvers.
 Built on ESA's [pykep](https://github.com/esa/pykep) (Lambert solver, flyby model, VSOP2013
 ephemeris, Sims–Flanagan low-thrust legs) and [pygmo](https://github.com/esa/pygmo2), plus SciPy.
 Comes with a browser UI for filtering, plotting and animating every cycler.
 
 MIT licensed: free to use, modify and redistribute, keeping the copyright notice. If you use
-the code or the catalogue, please credit the project (see [Citing](#citing)).
+the code or the catalog, please credit the project (see [Citing](#citing)).
 
 ## What it does
 
@@ -59,7 +59,7 @@ the multi-assist optimiser reproduces the single-assist Aldrin cost exactly at t
 launch windows recur once per synodic period; ephemeris states are in the J2000 ecliptic frame;
 per-leg revolution counts used for real-planet continuation reproduce the cycler arc itself.
 
-## Catalogue (default settings)
+## Catalog (default settings)
 
 - **Single-assist:** 1,089 solutions across the 6 ordered pairs. 769 cross the target planet's
   orbit and are cyclers; the other 320 are *home-only* orbits (see [Definitions](#definitions)).
@@ -79,7 +79,7 @@ per-leg revolution counts used for real-planet continuation reproduce the cycler
     (e.g. 7S8: 13 of 14), though at v∞ about 2 km/s off the ideal.
   - The Aldrin cycler (1L1): median 1.69 km/s per cycle across 14 windows, best window
     ballistic, worst 2.78 km/s. Byrnes et al. (1993) report 247–291 m/s per synodic period with a
-    full 15-year optimisation; this catalogue's local ±45-day, powered-flyby-only search is an
+    full 15-year optimisation; this catalog's local ±45-day, powered-flyby-only search is an
     upper bound.
 
 `max_vinf_deviation_kms` in the `ephemeris` table (the "v∞ drift" in the UI) says how far each
@@ -127,7 +127,7 @@ server needed) after running `scripts/export_web.py`, which turns `data/cyclers.
 `web/catalog.js` plus one small file per cycler in `web/ephem/` (real-planet trajectories,
 loaded when you click a window).
 
-- **Catalogue**, with an *Ideal model / Real planets* switch: filter cyclers by family, planet
+- **Catalog**, with an *Ideal model / Real planets* switch: filter cyclers by family, planet
   pair, ΔV per cycle, v∞, period and launch C3; plot any two of period, ΔV, v∞, aphelion,
   perihelion, C3, ΔV from LEO and v∞ drift; sortable table with CSV export. The detail panel
   compares ideal and real values (median / best / worst window). The trajectory view animates
@@ -184,7 +184,7 @@ loaded when you click a window).
 4. **Low thrust is experimental.** The leg solver converges (homotopy + SLSQP), but replacing a
    powered flyby with thrust on the preceding leg, holding dates fixed, is usually *more*
    expensive than the impulse. A proper low-thrust cycler needs the whole chain re-optimised
-   with thrust arcs (MGA-LT). The catalogue reports only a lower-bound SEP acceleration screen.
+   with thrust arcs (MGA-LT). The catalog reports only a lower-bound SEP acceleration screen.
 5. **Resonant / half-revolution "generic return" legs** (planet → same planet after an integer
    or half-integer number of years) are not yet modelled; they matter for VISIT-style cyclers
    (the n = 7 family of McConaghy et al. Table 5, which is degenerate in the Lambert sense).
@@ -213,9 +213,9 @@ Russell & Ocampo (2004, 2005); Chen et al. (2002, powered cyclers); Barrow & Hol
 
 ## Citing
 
-If you use the code or the catalogue, please credit the project, for example:
+If you use the code or the catalog, please credit the project, for example:
 
-> Mutasim, S. (2026). *cyclerdb: a Venus / Earth / Mars cycler trajectory catalogue*
+> Mutasim, S. (2026). *cyclerdb: a Venus / Earth / Mars cycler trajectory catalog*
 > (version 0.1.0).
 
 `CITATION.cff` carries the same information in machine-readable form; GitHub shows it as
@@ -225,7 +225,7 @@ relevant.
 ## License
 
 Copyright (c) 2026 Sharif Mutasim. Released under the [MIT License](LICENSE): you may use,
-copy, modify and distribute this software and the catalogue it produces, provided the
+copy, modify and distribute this software and the catalog it produces, provided the
 copyright notice and license text are kept in all copies or substantial portions.
 
 Third-party dependencies keep their own licenses and are not bundled: pykep and pygmo
